@@ -25,6 +25,8 @@ if (!require("BiocManager", quietly = TRUE))
 
 BiocManager::install("scry")
 BiocManager::install("ComplexHeatmap")
+BiocManager::install("rhdf5")
+
 ```
 To download dependencies that were developed internally by BWH Bioinformatics and Genomics Hub
 ```
