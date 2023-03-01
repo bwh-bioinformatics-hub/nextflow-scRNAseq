@@ -28,3 +28,11 @@ if (!require("BiocManager", quietly = TRUE))
 BiocManager::install("scry")
 BiocManager::install("ComplexHeatmap")
 ```
+```
+To download dependencies that were developed internally by BWH Bioinformatics and Genomics Hub
+```
+Sys.setenv(GITHUB_PAT = "[your_PAT_here]")
+devtools::install_github("bwh-bioinformatics-hub/H5MANIPULATOR")
+devtools::install_github("bwh-bioinformatics-hub/H5MANIPULATOR")
+
+git clone https://github.com/bwh-bioinformatics-hub/rna_seq_pipeline_bwh.git
