@@ -32,7 +32,7 @@ To download dependencies that were developed internally by BWH Bioinformatics an
 ```
 Sys.setenv(GITHUB_PAT = "[your_PAT_here]")
 devtools::install_github("bwh-bioinformatics-hub/H5MANIPULATOR")
-devtools::install_github("bwh-bioinformatics-hub/H5MANIPULATOR")
+devtools::install_github("bwh-bioinformatics-hub/qcreporter")
 
 git clone https://github.com/bwh-bioinformatics-hub/rna_seq_pipeline_bwh.git
 ```
