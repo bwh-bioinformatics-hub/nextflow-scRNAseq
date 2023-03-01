@@ -28,7 +28,6 @@ if (!require("BiocManager", quietly = TRUE))
 BiocManager::install("scry")
 BiocManager::install("ComplexHeatmap")
 ```
-```
 To download dependencies that were developed internally by BWH Bioinformatics and Genomics Hub
 ```
 Sys.setenv(GITHUB_PAT = "[your_PAT_here]")
