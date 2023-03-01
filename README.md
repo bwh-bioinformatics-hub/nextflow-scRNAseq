@@ -1,8 +1,6 @@
 # nextflow-scRNAseq
 Nextflow for single-cell RNAseq
 
-### [Version History](#version_history)
-
 <a id="dependencies"></a>
 
 ## Dependencies    
