@@ -36,3 +36,4 @@ devtools::install_github("bwh-bioinformatics-hub/H5MANIPULATOR")
 devtools::install_github("bwh-bioinformatics-hub/H5MANIPULATOR")
 
 git clone https://github.com/bwh-bioinformatics-hub/rna_seq_pipeline_bwh.git
+```
