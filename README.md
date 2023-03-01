@@ -36,3 +36,7 @@ devtools::install_github("bwh-bioinformatics-hub/qcreporter")
 
 git clone https://github.com/bwh-bioinformatics-hub/rna_seq_pipeline_bwh.git
 ```
+To create conda environment with dependencies install
+```
+conda env create -f environment.yml 
+```
