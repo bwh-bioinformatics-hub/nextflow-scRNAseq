@@ -7,10 +7,10 @@ Nextflow for single-cell RNAseq
 
 ### Overview:
 
-This pipeline manages a pore-c workflow starting from raw fastq files and converting
+This pipeline manages a scRNA-Seq workflow starting from raw fastq files and converting
 them to standard file formats for use by downstream tools. The steps involved are:
 
-* Pre-processing a reference genome or draft assembly to generate auxiliary files used in downstream analyses
+* Cell Ranger Count takes FASTQ files from cellranger mkfastq and performs alignment, filtering, barcode counting, and UMI counting. It uses the Chromium cellular barcodes to generate feature-barcode matrices, determine clusters, and perform gene expression analysis. The count pipeline can take input from multiple sequencing runs on the same GEM well. cellranger count also processes Feature Barcode data alongside Gene Expression reads.
 * Creating virtual digests of the genome
 * Filtering the raw reads to remove any that might break downstream tools
 * Align against a reference genome
