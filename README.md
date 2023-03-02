@@ -10,16 +10,13 @@ Nextflow for single-cell RNAseq
 This pipeline manages a scRNA-Seq workflow starting from raw fastq files and converting
 them to standard file formats for use by downstream tools. The steps involved are:
 
-* Cell Ranger Count takes FASTQ files from cellranger mkfastq and performs alignment, filtering, barcode counting, and UMI counting. It uses the Chromium cellular barcodes to generate feature-barcode matrices, determine clusters, and perform gene expression analysis. The count pipeline can take input from multiple sequencing runs on the same GEM well. cellranger count also processes Feature Barcode data alongside Gene Expression reads.
-* Creating virtual digests of the genome
-* Filtering the raw reads to remove any that might break downstream tools
-* Align against a reference genome
-* Processing results to filter spurious alignments, detect ligation junctions and assign fragments. The results are stored in a [parquet](http://parquet.apache.org/) table for downstream processing.
-* Converting the results to the following formats:
-  - [pairs format](https://github.com/4dn-dcic/pairix/blob/master/pairs_format_specification.md)
-  - [cooler format](https://mirnylab.github.io/cooler/)
-  - [hic medium format](https://github.com/aidenlab/juicer/wiki/Pre#medium-format-most-common)
-  - [salsa2 bed format](https://github.com/marbl/SALSA)
+* Cell Ranger Count takes FASTQ files from cellranger mkfastq and performs alignment, filtering, barcode counting, and UMI counting. It uses the Chromium   cellular barcodes to generate feature-barcode matrices, determine clusters, and perform gene expression analysis. The count pipeline can take input     
+  from multiple sequencing runs on the same GEM well. cellranger count also processes Feature Barcode data alongside Gene Expression reads.
+* Scrublet Process: Single-Cell Remover of Doublets, Python code for identifying doublets in single-cell RNA-seq data.
+* Add meta, will add the metadata from CellRanger Count and user provided samplesheet to .h5 file.
+* Create QC Report of all Samples provided.
+* Cell Clustering and Cell Type Annotation.
+* Perform Trajectory Analysis.
 <a id="dependencies"></a>
 
 ## Dependencies    
