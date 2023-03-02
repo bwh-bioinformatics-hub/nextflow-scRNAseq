@@ -34,6 +34,11 @@ install.packages("scCustomize",repo="https://cloud.r-project.org")
 # Dot plot is depedent on GitHub Report (https://github.com/Simon-Leonard/FlexDotPlot)
 devtools::install_github("Simon-Leonard/FlexDotPlot")
 ```
+Python Packages can be installed in Python using:
+```
+pip install scrublet
+```
+
 Some Packages are Dependent on BiocManager
 ```
 if (!require("BiocManager", quietly = TRUE))
