@@ -10,14 +10,13 @@ nextflow.enable.dsl=1
    Contact  :     
 ----------------------------------------------------------------------------------------
 */
-sample_id = params.sample_id
 
 println """\
          RNA Seq - N F   P I P E L I N E
          ===================================
          Experiment       		   : ${params.experiment_id}
          Samplesheet        		   : ${params.in_key}
-         CellRangersOuts Directory          : ${params.cellranger_outs_path}
+         CellRangersOuts Directory         : ${params.cellrangers_outdir}
          QC Report input directory 	   : ${params.qc_in_dir}
          QC Report Output directory 	   : ${params.qc_output}
          """
