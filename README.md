@@ -56,6 +56,9 @@ BiocManager::install("rhdf5")
 
 ```
 To download dependencies that were developed internally by BWH Bioinformatics and Genomics Hub
+scRNA_seq Pipeline: https://github.com/bwh-bioinformatics-hub/rna_seq_pipeline_bwh
+H5MANIPULATOR: https://github.com/bwh-bioinformatics-hub/H5MANIPULATOR
+qcreporter: https://github.com/bwh-bioinformatics-hub/qcreporter
 ```
 Sys.setenv(GITHUB_PAT = "[your_PAT_here]")
 devtools::install_github("bwh-bioinformatics-hub/H5MANIPULATOR")
@@ -84,3 +87,5 @@ QASyn-2
 QASyn-3
 QTau-4
 ```
+
+
