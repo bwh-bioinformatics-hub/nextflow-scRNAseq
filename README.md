@@ -75,8 +75,9 @@ conda env create -f environment.yml
 ```
 Setup:
 
-Nextflow will parse a .csv file for the sample_ids in your project. Please provide at the minimum a sample_id column to the .csv file. \ If working with a .xls/.xlsx file please create a .csv file called samples.csv with a column labeled == 'sample_id'
-example:
+Nextflow will parse a .csv file for the sample_ids in your project. Please provide at the minimum a sample_id column to the .csv file. \
+If working with a .xls/.xlsx file please create a .csv file called samples.csv with a column labeled == 'sample_id' \
+example: \
 https://github.com/bwh-bioinformatics-hub/nextflow-scRNAseq/blob/main/samplesheet/samplesheet.csv
 ```
 sample_id
