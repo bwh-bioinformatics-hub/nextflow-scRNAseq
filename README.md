@@ -56,9 +56,9 @@ BiocManager::install("rhdf5")
 
 ```
 To download dependencies that were developed internally by BWH Bioinformatics and Genomics Hub
-scRNA_seq Pipeline: https://github.com/bwh-bioinformatics-hub/rna_seq_pipeline_bwh
-H5MANIPULATOR: https://github.com/bwh-bioinformatics-hub/H5MANIPULATOR
-qcreporter: https://github.com/bwh-bioinformatics-hub/qcreporter
+scRNA_seq Pipeline: https://github.com/bwh-bioinformatics-hub/rna_seq_pipeline_bwh \
+H5MANIPULATOR: https://github.com/bwh-bioinformatics-hub/H5MANIPULATOR \
+qcreporter: https://github.com/bwh-bioinformatics-hub/qcreporter \
 ```
 Sys.setenv(GITHUB_PAT = "[your_PAT_here]")
 devtools::install_github("bwh-bioinformatics-hub/H5MANIPULATOR")
@@ -72,7 +72,7 @@ conda env create -f environment.yml
 ```
 Setup:
 
-Nextflow will parse a .csv file for the sample_ids in your project. Please provide at the minimum a sample_id column to the .csv file. If working with a .xls/.xlsx file please create a .csv file called samples.csv with a column labeled == 'sample_id'
+Nextflow will parse a .csv file for the sample_ids in your project. Please provide at the minimum a sample_id column to the .csv file. \ If working with a .xls/.xlsx file please create a .csv file called samples.csv with a column labeled == 'sample_id'
 example:
 https://github.com/bwh-bioinformatics-hub/nextflow-scRNAseq/blob/main/samplesheet/samplesheet.csv
 ```
