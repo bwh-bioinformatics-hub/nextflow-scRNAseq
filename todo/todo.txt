@@ -1,0 +1,2 @@
+Extract SampleID from .csv instead of from nextflow.config
+Add to ReadME how to construct samplesheet.csv
