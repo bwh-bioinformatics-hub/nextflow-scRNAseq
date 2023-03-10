@@ -65,6 +65,12 @@ process scrublet {
 	"""
 }
 
+Channel
+    .fromPath( params.samples_csv )
+    .splitCsv( header: true, sep: ',' )
+    .map { row ->  row.sample_id }
+    .set { sample_id }
+
 process add_meta {
 
 	publishDir params.outdir, mode: params.publish_dir_mode
