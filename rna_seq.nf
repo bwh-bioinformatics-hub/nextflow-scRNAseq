@@ -25,6 +25,9 @@ println """\
 
 process cellranger_count {
 
+  when:
+  params.fastq_path
+
   input:
   ID from params.ID
   ref from params.refdir
