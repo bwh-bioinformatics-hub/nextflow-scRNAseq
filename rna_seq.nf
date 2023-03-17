@@ -111,7 +111,7 @@ process QC_Report {
     	
     script:
     """
-    Rscript /home/acicalo/software/qcreporter/qc_batch_summary_rachel_2022.r \
+    Rscript /home/acicalo/software/qcreporter/qc_batch_summary.r \
     	-e  ${params.experiment_id} \
     	-m  'scrna' \
     	-i  ${params.qc_in_dir} \
