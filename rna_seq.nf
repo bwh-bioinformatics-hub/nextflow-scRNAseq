@@ -11,39 +11,56 @@ nextflow.enable.dsl=1
 ----------------------------------------------------------------------------------------
 */
 
+
+Channel
+    .fromPath( params.samples_csv )
+    .splitCsv( header: true, sep: ',' )
+    .map { row ->  tuple(row.sample_id, file(row.fastq_path)) }
+    .set { sample_run_ch }
+
+(cellranger_input, meta_input,scrublet_input) = sample_run_ch.into(3)
+
+
+Channel
+    .fromPath( params.samples_csv )
+    .splitCsv( header: true, sep: ',' )
+    .map { row ->  row.sample_id }
+    .set { sample_id }
+
 println """\
          RNA Seq - N F   P I P E L I N E
          ===================================
-         Experiment       		   : ${params.experiment_id}
+         Experiment       		     : ${params.experiment_id}
          Samplesheet        		   : ${params.in_key}
-         CellRangersOuts Directory         : ${params.cellrangers_outdir}
-         QC Report input directory 	   : ${params.qc_in_dir}
-         QC Report Output directory 	   : ${params.qc_output}
+         CellRangersOuts Directory : ${params.cellrangers_outdir}
+         QC Report input directory : ${params.qc_in_dir}
+         QC Report Output directory: ${params.qc_output}
          """
          .stripIndent()
 
+/* set ref directory e.g. (mouse,human,fly) */
+ref = params.refdir
 
 process cellranger_count {
 
-  when:
-  params.fastq_path
+  publishDir (
+  path: "${params.outdir}/cellrangersouts",
+  mode: 'copy',
+  overwrite: 'true',
+    )
 
   input:
-  ID from params.ID
-  ref from params.refdir
-  fastq_path from params.fastq_path
+  ref 
+  tuple val(sample_id), file(fastq_path) from cellranger_input
 
   output:
-  file("cellrangersouts") into cellrangers_outs
+  file("cellrangersouts") into cellrangers_outs,outs_dir
   script: 
   """
-  mkdir -p ${baseDir}/results/cellrangersouts/
-  cd ${baseDir}/results/cellrangersouts/
-
-  ${params.cellranger_software_path}/cellranger count --id=$ID \
+  ${params.cellranger_software_path}/cellranger count --id=$sample_id \
                    --transcriptome=$ref \
                    --fastqs=$fastq_path \
-                   --sample=$ID \
+                   --sample=$sample_id \
                    --localcores=30 \
                    --localmem=64
   """
@@ -52,35 +69,37 @@ process cellranger_count {
 
 process scrublet {
 	
-	publishDir params.scrublet_OUT, mode: params.publish_dir_mode
-	
+  publishDir (
+        path: "${params.outdir}",
+        mode: 'copy',
+        overwrite: 'true',
+  )		
 	input:
 
-	    each sample_id 
-	output:
+  each sample_id 
+	file(cellranger) from cellrangers_outs.collect()
 
+  output:
+
+  file("scrubletdir") into scrubletdir
 	script:
 	"""
-	
-	python3 ${baseDir}/scrublet_multi.py ${params.cellrangers_outdir} ${params.scrublet_SUFFIX} ${params.scrublet_OUT} ${sample_id}
-	
+  mkdir -p scrubletdir
+	python3 ${baseDir}/scripts/scrublet_multi.py ${cellranger} ${params.scrublet_SUFFIX} scrubletdir/ ${sample_id}
 	"""
 }
 
-Channel
-    .fromPath( params.samples_csv )
-    .splitCsv( header: true, sep: ',' )
-    .map { row ->  row.sample_id }
-    .set { sample_id }
-
 process add_meta {
 
-	publishDir params.outdir, mode: params.publish_dir_mode
-
+  publishDir (
+        path: "${params.outdir}",
+        mode: 'copy',
+        overwrite: 'true',
+  )	
         
     input:
-    	each sample_id 
-
+    each sample_id 
+    file(outs) from outs_dir.collect()
                
     output: 
     
@@ -89,10 +108,10 @@ process add_meta {
     script:
 
     """
-    Rscript /home/acicalo/software/rna_seq_pipeline_bwh/tenx_metadata_rna_adder.r \
-  -i ${params.cellrangers_outdir}/${sample_id}/outs/filtered_feature_bc_matrix.h5   \
-  -l ${params.cellrangers_outdir}/${sample_id}/outs/molecule_info.h5 \
-  -s ${params.cellrangers_outdir}/${sample_id}/outs/metrics_summary.csv \
+    Rscript /mnt/data0/projects/biohub/software/tenx_metadata_rna_adder.r \
+  -i ${outs}/${sample_id}/outs/filtered_feature_bc_matrix.h5   \
+  -l ${outs}/${sample_id}/outs/molecule_info.h5 \
+  -s ${outss}/${sample_id}/outs/metrics_summary.csv \
   -k ${params.in_key} \
   -j ${sample_id} \
   """
@@ -106,12 +125,12 @@ process QC_Report {
 	
     input:
     
-    in_h5 from meta_added.collect()
+    file(in_h5) from meta_added.collect()
     output: 
     	
     script:
     """
-    Rscript /home/acicalo/software/qcreporter/qc_batch_summary.r \
+    Rscript /mnt/data0/projects/biohub/software/qc_batch_summary.r \
     	-e  ${params.experiment_id} \
     	-m  'scrna' \
     	-i  ${params.qc_in_dir} \
