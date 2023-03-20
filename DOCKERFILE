@@ -1,12 +1,45 @@
-FROM continuumio/miniconda3:4.8.2
+FROM ubuntu
 LABEL authors="BWH-Genomics and Bioinformatics Hub" \
       description="Docker image containing all software requirements for the qbic-pipelines/cellranger pipeline"
 
-# Install procps and clean apt cache
+## Resolving R and lib dependencies
 RUN apt-get update \
-  && apt-get install -y procps \
-  && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+    && apt-get install -y \
+    build-essential \
+    libbz2-dev \
+    libc6-dev \
+    libgcc-9-dev \
+    gcc-9-base \
+    liblzma-dev \
+    libssl-dev \
+    libxml2-dev \
+    libgit2-dev \
+    zlib1g-dev \
+    libcurl4-openssl-dev \
+    libhdf5-dev \
+    pandoc \
+    libpng-dev \
+    pkg-config \
+    ## clean up
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/ \
+    && rm -rf /tmp/downloaded_packages/ /tmp/*.rds
+    
+## Install packages from CRAN & BioConductor
+RUN Rscript -e "install.packages(c('BiocManager', 'devtools', 'assertthat', 'cowplot', 'data.table', 'dplyr', 'ids', 'ggplot2', 'jsonlite', 'Matrix', 'optparse', 'purrr', 'R.utils', 'rmarkdown')); BiocManager::install(c('rhdf5', 'SingleCellExperiment', 'SummarizedExperiment'))" \
+    ## clean up
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/ \
+    && rm -rf /tmp/downloaded_packages/ /tmp/*.rds
 
+## Install packages from github
+COPY auth_token /tmp/auth_token
+RUN export GITHUB_PAT=$(cat /tmp/auth_token) \
+    && Rscript -e "devtools::install_github(repo = 'bwh-bioinformatics-hub/H5MANIPULATOR', auth_token = Sys.getenv('GITHUB_PAT')); devtools::install_github(repo = 'bwh-bioinformatics-hub/qcreporter', auth_token = Sys.getenv('GITHUB_PAT'))" \
+    ## clean up
+    && git clone git clone https://github.com/bwh-bioinformatics-hub/rna_seq_pipeline_bwh.git \
+    && rm -rf /tmp/downloaded_packages/ /tmp/*.rds /tmp/auth_token
+    
 # Install the conda environment
 COPY environment.yml /
 RUN conda env create --quiet -f /environment.yml && conda clean -a
