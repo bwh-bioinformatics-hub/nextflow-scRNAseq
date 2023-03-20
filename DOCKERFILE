@@ -1,7 +1,6 @@
 FROM ubuntu
 LABEL authors="BWH-Genomics and Bioinformatics Hub" \
-      description="Docker image containing all software requirements for the bwh-bioinformatics-hub/
-nextflow-scRNAseq pipeline"
+      description="Docker image containing all software requirements for the qbic-pipelines/cellranger pipeline"
 
 ## Resolving R and lib dependencies
 RUN apt-get update \
