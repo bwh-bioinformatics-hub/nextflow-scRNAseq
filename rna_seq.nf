@@ -108,7 +108,7 @@ process add_meta {
     script:
 
     """
-    Rscript /mnt/data0/projects/biohub/software/tenx_metadata_rna_adder.r \
+    Rscript /mnt/data0/projects/biohub/software/rna_seq_pipeline_bwh/tenx_metadata_rna_adder.r \
   -i ${outs}/${sample_id}/outs/filtered_feature_bc_matrix.h5   \
   -l ${outs}/${sample_id}/outs/molecule_info.h5 \
   -s ${outss}/${sample_id}/outs/metrics_summary.csv \
