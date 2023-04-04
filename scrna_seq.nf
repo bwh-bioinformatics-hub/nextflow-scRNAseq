@@ -12,11 +12,6 @@ nextflow.enable.dsl=1
 */
 
 
-// Replace this with the path to a directory containing raw fastq files
-params.fastqs_dir = '/mnt/data0/projects/donglab/EWA_Ruifeng2023/data/fastqs/'
-fastq_path = params.fastqs_dir
-
-
 Channel
     .fromPath( params.samples_csv )
     .splitCsv( header: true, sep: ',' )
