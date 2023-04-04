@@ -1,0 +1,261 @@
+<!-- # Child Rmarkdown Document for Cluster Annotation -->
+<!-- Parent document must have a variable "in_rna" containing metadata-injected H5 files by sample --> 
+<a id="rna_seq_cluster_annotation_top"></a>
+
+```{r, include=FALSE} 
+orig_workspace <- ls()
+
+scrna_seq_sample_module_version <- "1.0.2" # 20211201
+stm("Starting scRNA Cluster Annotation Module")
+```
+
+### Contents 
+
+#### [QC Seurat Object](#seurat_qc)
+  - [Before Filter](#before_filtration)  
+  - [After Filter: nUMI > 500, #nGene > 300 # mitoratio < 0.2](#after_filter)
+  - [Variable Feature Plot](#variable_feature_plot)
+  - [Principal Component Plot (Elbow Plot)](#elbow_plot)
+  - [UMAP-Treatments](#UMAP)
+  - [Resolution's Plot](#SNN_Resoulation)
+#### [Cell Cluster Annotations](#cluster_annotation)
+  - [Marker Gene Table](#mgt) 
+<details style="color: lightgray;">  
+  <summary>Expand Code</summary> 
+
+Check Dependencies
+```{r scrna_cluster_annotation_dependencies, include = FALSE}
+assertthat::assert_that(exists("in_rna"))  
+all_h5 <- list.files(path = in_rna, 
+                               pattern = ".h5$", 
+                               full.names = TRUE, recursive = TRUE)
+assertthat::assert_that(length(all_h5) >0, 
+                        msg = sprintf("Did not detect any .h5 files in input RNA directory %s", in_rna))
+
+```
+
+Reading in sample key to pick up marker genes  
+```{r rna_markergenes}
+stm("Reading in Marker Genes")
+
+if (length(grep("https",in_key)) > 0) {
+    ss <- read_sheet(in_key)
+    } else if (length(grep(".xlsx",in_key)) > 0 ){
+        ss_key <- import_list(in_key)
+    } else {
+        ss <- read.csv(in_key)
+}
+
+# Format Marker Genes
+MarkerGenes <- ss_key$MarkerGenes
+CellTypes <- t(MarkerGenes$'Cell type')
+MarkerGenes_Per_CellType <- t(MarkerGenes$'Marker gene')
+MarkerGenes_Per_CellType <- strsplit(MarkerGenes_Per_CellType,",")
+MarkerGenes_Per_CellType <- gsub(" ","",MarkerGenes_Per_CellType)
+MarkerGenes_Per_CellType <- t(MarkerGenes_Per_CellType)
+MarkerGene_df <- data.frame(MarkerGenes_Per_CellType)
+names(MarkerGene_df) <- CellTypes
+```
+
+<details style="color: lightgray;"> 
+  <summary>Expand code</summary>  
+
+### Seurat
+
+```{r rna_seurat}
+stm("Creating Seurat object from merged data for scRNA Cluster Annotation")
+
+seurat_obj <- lapply(all_h5,H5MANIPULATOR::read_h5_seurat)
+
+merged_so <- Merge_Seurat_List(seurat_obj,
+                               add.cell.ids = NULL,
+                               merge.data = TRUE,
+                               project = "SeuratProject")
+merged_so@meta.data$log10GenesPerUMI <- log10(merged_so$n_genes) / log10(merged_so$n_reads)
+merged_so[["percent.mt"]] <- PercentageFeatureSet(merged_so, pattern = "^mt:")
+
+metadata <- merged_so@meta.data
+```
+
+[Return to Contents](#rna_seq_sample_top) 
+
+<a  id="before_filtration"></a> 
+
+### QC Plot Before Filter
+```{r qc_plot_before_filter, results="asis"}
+# Visualize the correlation between genes detected and number of UMIs and determine whether strong presence of cells with low numbers of genes/UMIs
+metadata %>% ggplot(aes(x=n_umis, y=n_genes, color=percent.mt)) + 
+geom_point() + 
+scale_colour_gradient(low = "gray90", high = "black") +
+stat_smooth(method=lm) +
+scale_x_log10() +
+scale_y_log10() + 
+theme_classic() +
+geom_vline(xintercept = 500) +
+geom_hline(yintercept = 300) +
+facet_wrap(~in_sample)
+
+stm("Applying Filter nUMI > 500, #nGene > 300 # mitoratio < 0.2")
+
+filtered_seurat <- subset(x = merged_so, 
+                            subset= (n_umis >= 500) & 
+                           (n_genes >= 325) & 
+                           (n_mito_umis <= 0.05))
+
+metadata_filtered <- filtered_seurat@meta.data
+```
+
+<a id= "after_filter"></a>
+
+### QC Plot After Filter: Filter: nUMI > 500, #nGene > 300 # mitoratio < 0.05
+```{r qc_plot_after_filter, results="asis"}
+# Visualize the correlation between genes detected and number of UMIs and determine whether strong presence of cells with low numbers of genes/UMIs
+metadata_filtered %>% ggplot(aes(x=n_umis, y=n_genes, color=percent.mt)) + 
+geom_point() + 
+scale_colour_gradient(low = "gray90", high = "black") +
+stat_smooth(method=lm) +
+scale_x_log10() +
+scale_y_log10() + 
+theme_classic() +
+geom_vline(xintercept = 500) +
+geom_hline(yintercept = 325) +
+facet_wrap(~in_sample)
+```
+
+```{r rna_PCA_cluster_annotation}
+# Standard Workflow Steps
+
+# Normalize data -----
+filtered_seurat <- NormalizeData(filtered_seurat)
+# Identify highly Variable Features 
+filtered_seurat <- FindVariableFeatures(filtered_seurat)
+# Identify the 10 most highly variable genes 
+top10 <- head(VariableFeatures(filtered_seurat), 10)
+```
+
+<a  id="variable_feature_plot"></a> 
+
+### plot Variable Features 
+```{r rna_VariableFeaturePlot}
+
+plot1 <- VariableFeaturePlot(filtered_seurat)
+LabelPoints(plot = plot1, points = top10, repel = TRUE)
+
+
+# scale data 
+# 5. Scaling -------------
+all.genes <- rownames(filtered_seurat)
+filtered_seurat<- ScaleData(filtered_seurat, features = all.genes)
+```
+
+<a  id="elbow_plot"></a> 
+
+### Linear Dimensionality Reduction 
+
+```{r rna_Elbow_Plot}
+filtered_seurat <- RunPCA(filtered_seurat, features = VariableFeatures(object = filtered_seurat),verbose = FALSE)
+
+ElbowPlot(filtered_seurat)
+filtered_seurat <- RunUMAP(filtered_seurat, dims=1:10,reduction ='pca')
+```
+
+<a  id="UMAP"></a> 
+
+### UMAP - Treatment
+```{r rna_UMAP_Plot}
+DimPlot(filtered_seurat, reduction = 'umap', group.by = 'treatment')
+
+# 7. Clustering ------------
+filtered_seurat <- FindNeighbors(filtered_seurat, dims = 1:10)
+
+# understanding resolution
+filtered_seurat <- FindClusters(filtered_seurat, resolution =  c(0.7,1,1.2,1.4))
+
+res_0.7 <- DimPlot(filtered_seurat, group.by = "RNA_snn_res.0.7", label = TRUE)
+res_1 <- DimPlot(filtered_seurat, group.by = "RNA_snn_res.1", label = TRUE)
+res_1.2 <- DimPlot(filtered_seurat, group.by = "RNA_snn_res.1.2", label = TRUE)
+res_1.4 <- DimPlot(filtered_seurat, group.by = "RNA_snn_res.1.4", label = TRUE)
+```
+<a  id="SNN_Resoulation"></a> 
+
+### Plot all Resolutions
+```{r rna_RES_Plot}
+ggarrange(res_0.7, res_1,res_1.2,res_1.4, ncol=2)
+
+# setting identity of clusters
+#Idents(filtered_seurat)
+Idents(filtered_seurat) <- "RNA_snn_res.1"
+filtered_seurat@meta.data$seurat_clusters <- filtered_seurat@meta.data$RNA_snn_res.1
+
+filtered_seurat <- RunUMAP(filtered_seurat, dims = 1:10)
+DimPlot(filtered_seurat, reduction = "umap")
+
+# visualize data
+clusters <- DimPlot(filtered_seurat, reduction = 'umap', group.by = 'seurat_clusters', label = TRUE)
+condition <- DimPlot(filtered_seurat, reduction = 'umap', group.by = 'treatment')
+
+# This loop just runs the FindMarkers function on all of the clusters
+lapply(
+  levels(filtered_seurat[["seurat_clusters"]][[1]]),
+  function(x)FindMarkers(filtered_seurat,ident.1 = x,min.pct = 0.25)
+) -> cluster.markers
+
+
+# This simply adds the cluster number to the results of FindMarkers
+sapply(0:(length(cluster.markers)-1),function(x) {
+  cluster.markers[[x+1]]$gene <<- rownames(cluster.markers[[x+1]])
+  cluster.markers[[x+1]]$cluster <<- x
+})
+```
+
+<a  id="mgt"></a> 
+```{r Marker_Gene_Table}
+# Finally we collapse the list of hits down to a single table and sort it by FDR to put the most significant ones first
+as_tibble(do.call(rbind,cluster.markers)) %>% arrange(p_val_adj) -> cluster.markers
+cluster.markers <- as.data.frame(cluster.markers)
+cluster.markers = cluster.markers %>% dplyr::select(cluster, gene, p_val, avg_log2FC,
+                                             p_val_adj,pct.1,pct.2)
+# Add Gene Description to Cluster Table via biomaRt
+ensembl <- useEnsembl(biomart = "genes")
+datasets <- listDatasets(ensembl)
+h5_list <- h5dump(all_h5[1])
+genome <- unique(h5_list$matrix$features$genome)
+if (genome == "Drosophila_melanogaster.genome"){
+    genome_for_biomaRt <- 'dmelanogaster_gene_ensembl'
+}
+mart_dataset_in_use <- datasets %>% filter(dataset == genome_for_biomaRt)
+ensembl <- useDataset(dataset = mart_dataset_in_use$dataset, mart = ensembl)
+
+gene <-  cluster.markers$gene # Genes in Dataset
+gene_description = getBM(attributes =  c('external_gene_name','description','flybase_gene_id'), 
+                         filters = 'external_gene_name', 
+                         values = gene, 
+                         mart = ensembl)
+colnames(gene_description) <- c('gene','description','FlyBase_ID')
+cluster.markers <- cluster.markers %>% left_join(gene_description,multiple = "all")
+final_df <- data.frame(           "cluster"    = cluster.markers$cluster,
+                                  "gene"       = cluster.markers$gene,
+                                  "p_val"      = cluster.markers$p_val,
+                                  "avg_log2FC" = cluster.markers$avg_log2FC,
+                                  "p_val_adj"  = cluster.markers$p_val_adj,
+                                  "pct.1"      = cluster.markers$pct.1,
+                                  "pct.2"      = cluster.markers$pct.2,
+                                  "FlyBase_ID" = paste0("<a  href='https://flybase.org/reports/",cluster.markers$FlyBase_ID,"'>", cluster.markers$FlyBase_ID,"</a>"))
+DT::datatable(final_df,class = 'cell-border stripe',rownames=F,filter='top',
+              editable = TRUE, extensions = 'Buttons', options = list(
+                dom = 'Bfrtip',
+                buttons = c('copy','csv','excel','pdf','print')
+              ),escape = FALSE)
+```
+
+[Return to Contents](#rna_seq_sample_top) 
+ 
+---  
+
+scRNA seq report well module v.`r {scrna_seq_sample_module_version}`, Brigham and Women's Bioinformatics and Genomics Hub  
+
+```{r scrna_cleanup, include = FALSE}
+module_vars <- setdiff(ls(), orig_workspace)
+rm(list=module_vars)
+gc()
+```
