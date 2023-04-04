@@ -21,10 +21,7 @@ Channel
     .fromPath( params.samples_csv )
     .splitCsv( header: true, sep: ',' )
     .map { row ->  row.sample_id }
-    .set { sample_id_ch }
-
-(sample_id,samples,sample) = sample_id_ch.into(3)
-
+    .set { sample_id }
 
 println """\
          RNA Seq - N F   P I P E L I N E
