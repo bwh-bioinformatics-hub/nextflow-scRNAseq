@@ -77,7 +77,7 @@ process add_meta {
     script:
 
     """
-    Rscript path/to/rna_seq_pipeline_bwh/tenx_metadata_rna_adder.r \
+    Rscript {baseDir}/scripts/rna_seq_pipeline_bwh/tenx_metadata_rna_adder.r \
   -i ${params.cellrangers_dir}/${sample}/outs/filtered_feature_bc_matrix.h5   \
   -l ${params.cellrangers_dir}/${sample}/outs/molecule_info.h5 \
   -s ${params.cellrangers_dir}/${sample}/outs/metrics_summary.csv \
@@ -100,7 +100,7 @@ process QC_Report {
     	
     script:
     """
-    Rscript /home/acicalo/bioinf_hub/pipeline_dir/HUB_rachel_2023/qcreporter/qc_batch_summary.r \
+    Rscript {baseDir}/scripts/qcreporter/qc_batch_summary.r \
     	-e  ${params.experiment_id} \
     	-m  'scrna' \
     	-i  ${params.qc_in_dir} \
