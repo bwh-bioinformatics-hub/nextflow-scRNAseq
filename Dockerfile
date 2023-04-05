@@ -6,6 +6,7 @@ ARG OS_IDENTIFIER=ubuntu-2204
 ## Resolving R and lib dependencies
 RUN apt-get update \
     && apt-get install -y \
+    vim \
     wget \
     git \ 
     build-essential \
