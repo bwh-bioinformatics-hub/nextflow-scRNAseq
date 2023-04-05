@@ -8,6 +8,7 @@ RUN apt-get update \
     && apt-get install -y \
     vim \
     wget \
+    default-jdk \
     git \ 
     build-essential \
     python3 \
@@ -51,3 +52,4 @@ RUN Rscript -e "install.packages('devtools',repos='http://cran.us.r-project.org'
 RUN Rscript -e "remotes::install_github('bwh-bioinformatics-hub/H5MANIPULATOR');remotes::install_github('satijalab/seurat-wrappers')"
 RUN Rscript -e "remotes::install_github('bwh-bioinformatics-hub/qcreporter')"
 RUN git clone https://github.com/bwh-bioinformatics-hub/nextflow-scRNAseq.git
+RUN wget -qO- https://get.nextflow.io | bash
