@@ -46,4 +46,4 @@ RUN Rscript -e "install.packages(c('BiocManager', 'devtools','FactoMineR', 'ggfo
     && rm -rf /tmp/downloaded_packages/ /tmp/*.rds
 RUN Rscript -e "install.packages('Seurat',repos='http://cran.us.r-project.org')"
 RUN Rscript -e "remotes::install_github('bwh-bioinformatics-hub/H5MANIPULATOR'); remotes::install_github('bwh-bioinformatics-hub/qcreporter');remotes::install_github('satijalab/seurat-wrappers')"
-RUN git clone "https://github.com/bwh-bioinformatics-hub/nextflow-scRNAseq.git"
+RUN git clone https://github.com/bwh-bioinformatics-hub/nextflow-scRNAseq.git
