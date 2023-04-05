@@ -7,6 +7,7 @@ ARG OS_IDENTIFIER=ubuntu-2204
 RUN apt-get update \
     && apt-get install -y \
     wget \
+    git \ 
     build-essential \
     python3 \
     python3-pip \
