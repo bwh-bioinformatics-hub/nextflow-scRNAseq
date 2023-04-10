@@ -385,18 +385,6 @@ scrna.combined_prefilter <- Merge_Seurat_List(scrna.list,
 metadata_prefilter <- scrna.combined_prefilter@meta.data
 # Save Prefilter
 saveRDS(scrna.combined_prefilter, paste0(outdir, "scrna.combined_prefilter.seurat.", projectName, ".rds"))
-
-
-# Read in doublet scores
-for (sample in samples){
-  doublet_scores <- scan(paste0(scrubletdir, sample, "_srublet.score"))
-  predicted_doublets <- scan(paste0(scrubletdir, sample, "_srublet.logic"))
-  ds <- as.data.frame(cbind(doublet_scores, predicted_doublets))
-  ds$predicted_doublets <- as.logical(ds$predicted_doublets)
-  rownames(ds) <- rownames(scrna.list[[sample]]@meta.data)
-  scrna.list[[sample]] <- AddMetaData(scrna.list[[sample]], ds)
-  scrna.list[[sample]] <- subset(scrna.list[[sample]], subset=predicted_doublets == FALSE)
-}
                    
 # Filtered Cells with 3SD of mean nCount and nFeature, percent of mito
   
