@@ -353,6 +353,11 @@ for (sample in samples){
   scrna.list[[sample]] <- subset(scrna.list[[sample]], subset=predicted_doublets == FALSE)
 }
 
+# add sample name
+for(i in 1:length(samples)){
+  sample=samples[i]; treatment=treatments[i];
+  scrna.list[[sample]]$treatment <- treatment
+}
 
                                     
                                                                   
