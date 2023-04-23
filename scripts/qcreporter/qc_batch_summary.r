@@ -48,20 +48,19 @@ option_list <- list(
               metavar = "character"),
   make_option(opt_str = c("-a","--nUMI"),
               type = "integer",
-              default = NULL,
+              default = 300,
               help = "nUMI filter Value",
-              metavar = "character"),
+              metavar = "integer"),
   make_option(opt_str = c("-b","--nFeature_RNA"),
               type = "integer",
-              default = NULL,
+              default = 300,
               help = "nFeatire filter Value",
               metavar = "integer"),
   make_option(opt_str = c("-c","--percent_mito"),
               type = "integer",
-              default = integer,
+              default = 10,
               help = "Percent Mito Filter Value",
-              metavar = "character")  
-)
+              metavar = "integer")  
 
 opt_parser <- OptionParser(option_list = option_list)
 
