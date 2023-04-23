@@ -509,7 +509,7 @@ ggarrange(genes_per_cell_pre,genes_per_cell_post,ncol=1,nrow=2,widths = 10,heigh
 ```
   
 ```{r }
-if (length(samples)>=2){
+if (length(samples)>=3){
 # Integration
 # normalize and identify variable features for each dataset independently
 scrna.list <- SplitObject(so_postfilter, split.by = "orig.ident")
@@ -543,7 +543,7 @@ so_postfilter <- RunPCA(so_postfilter, npcs = 15, verbose = FALSE)
 <a  id="elbow_plot"></a> 
 ### Linear Dimensionality Reduction 
 ```{r rna_Elbow_Plot}
-if (length(samples)>=2){
+if (length(samples)>=3){
     p1 <- ElbowPlot(scrna.combined) + ggtitle("Integrated") + theme(aspect.ratio=5/10) + theme(plot.margin = unit(c(6, 6, 6, 6), "cm"))
     print(p1 + coord_fixed())
 } else{
@@ -556,7 +556,7 @@ if (length(samples)>=2){
 ### UMAP - Resolutions
 ```{r rna_UMAP_Resolutions_Plot}
 # Continue on analysis
-if (length(samples)>=2){
+if (length(samples)>=3){
     # Continue on integrated analysis
 scrna.combined <- RunUMAP(scrna.combined, reduction = "pca", dims = 1:8,verbose=FALSE)
 scrna.combined <- FindNeighbors(scrna.combined, reduction = "pca", dims = 1:8,verbose=FALSE)
@@ -621,7 +621,7 @@ print(res_1.4)
 <a  id="UMAP"></a> 
 ```{r rna_UMAP}
 ### UMAP - Treatment
-if (length(samples)>=2){
+if (length(samples)>=3){
 p1 <- DimPlot(scrna.combined, reduction = "umap", group.by = "orig.ident")
 print(p1 + coord_fixed())
 #p2 <- DimPlot(scrna.combined, reduction = "umap", label = TRUE, repel = TRUE)
@@ -651,7 +651,7 @@ rm(p4)
 ```
 
 ```{r }
-if (length(samples)>=2){
+if (length(samples)>=3){
 DefaultAssay(scrna.combined) <- "RNA"
 all.genes <- rownames(scrna.combined)
 scrna.combined <- ScaleData(scrna.combined,features = all.genes,verbose = FALSE)
