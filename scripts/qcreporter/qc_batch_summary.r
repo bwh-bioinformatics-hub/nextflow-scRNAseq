@@ -60,7 +60,7 @@ option_list <- list(
               type = "integer",
               default = 10,
               help = "Percent Mito Filter Value",
-              metavar = "integer")  
+              metavar = "integer"))
 
 opt_parser <- OptionParser(option_list = option_list)
 
