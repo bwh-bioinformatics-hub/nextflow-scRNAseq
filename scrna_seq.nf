@@ -35,13 +35,12 @@ println """\
 process scrublet {
 
   publishDir (
-        path: "${params.outdir}/scrubletdir",
+        path: "${params.outdir}/scrubletdir/",
         mode: 'copy',
         overwrite: 'true',
   )	 
     input:
     each samples 
-    path(outs_dir) from cellrangers_outs.collect()            
     output: 
     
     path("${samples}_scrublet.{logic,score}") into scrublet_out
@@ -49,7 +48,7 @@ process scrublet {
     script:
 
     """
-	python3 ${baseDir}/scripts/scrublet_multi.py ${params.cellrangers_dir} ${params.scrublet_SUFFIX} ${samples}
+	python3 ${baseDir}/scripts/scrublet_multi.py ${params.cellrangers_outs_dir} ${params.scrublet_SUFFIX} ${samples}
     """
 
 }
@@ -64,7 +63,6 @@ process add_meta {
         
     input:
     each sample 
-    path(ranger) from cellranger.collect()          
     output: 
     
     	path("${sample}.h5") into meta_added
@@ -72,10 +70,10 @@ process add_meta {
     script:
 
     """
-    Rscript {baseDir}/scripts/rna_seq_pipeline_bwh/tenx_metadata_rna_adder.r \
-  -i ${params.cellrangers_dir}/${sample}/outs/filtered_feature_bc_matrix.h5   \
-  -l ${params.cellrangers_dir}/${sample}/outs/molecule_info.h5 \
-  -s ${params.cellrangers_dir}/${sample}/outs/metrics_summary.csv \
+    Rscript ${baseDir}/scripts/rna_seq_pipeline_bwh/tenx_metadata_rna_adder.r \
+  -i ${params.cellrangers_outs_dir}/${sample}/outs/filtered_feature_bc_matrix.h5   \
+  -l ${params.cellrangers_outs_dir}/${sample}/outs/molecule_info.h5 \
+  -s ${params.cellrangers_outs_dir}/${sample}/outs/metrics_summary.csv \
   -k ${params.in_key} \
   -j ${sample} \
   """
@@ -90,25 +88,24 @@ process QC_Report {
     
     file(in_h5) from meta_added.collect()
     file(scrub_dir) from scrublet_out.collect()
-    path(cellrangerouts) from counts.collect()
     output: 
     	
     script:
     """
-    Rscript {baseDir}/scripts/qcreporter/qc_batch_summary.r \
+    Rscript ${baseDir}/scripts/qcreporter/qc_batch_summary.r \
     	-e  ${params.experiment_id} \
     	-m  'scrna' \
     	-i  ${params.qc_in_dir} \
-    	-z  ${cellrangerouts} \
-    	-u  ${scrub_dir} \
+    	-z  ${params.cellrangers_outs_dir} \
+    	-u  ${params.outdir}/scrubletdir/" \
     	-f  ${params.refdir} \
     	-k  ${params.in_key}   \
     	-d  ${params.qc_output} \
     	-o  ${params.qc_output}/${params.experiment_id}_rnaseq_sample_report.html 
-        -a  ${params.nUMI} \
-        -b  ${params.nFeatures} \
-        -c  ${params.percent_mito} \
-	-d  ${params.resolution}
+      -a  ${params.nUMI} \
+      -b  ${params.nFeatures} \
+      -c  ${params.percent_mito} \
+	    -d  ${params.resolution}
   """
 }
 
