@@ -41,10 +41,8 @@ for sample in samples:
       multiplet_rate = 0.056
   elif n_cells >= 8000 and n_cells < 9000:
       multiplet_rate = 0.064
-  elif n_cells >= 9000 and n_cells < 10000:
-      multiplet_rate = 0.072
   else:
-     multiplet_rate = 0.080
+     multiplet_rate = 0.072
 
 for sample in samples:
   input_dir = input_dir_prefix + sample + input_dir_suffix
