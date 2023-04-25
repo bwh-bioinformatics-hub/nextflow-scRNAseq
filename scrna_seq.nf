@@ -102,9 +102,6 @@ process QC_Report {
     	-k  ${params.in_key}   \
     	-d  ${params.qc_output} \
     	-o  ${params.qc_output}/${params.experiment_id}_rnaseq_sample_report.html 
-        -a  ${params.nUMI} \
-        -b  ${params.nFeatures} \
-        -c  ${params.percent_mito} \
 	-j  ${params.resolution}
   """
 }
