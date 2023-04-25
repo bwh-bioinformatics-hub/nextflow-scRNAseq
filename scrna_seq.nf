@@ -101,7 +101,8 @@ process QC_Report {
     	-f  ${params.refdir} \
     	-k  ${params.in_key}   \
     	-d  ${params.qc_output} \
-    	-o  ${params.qc_output}/${params.experiment_id}_rnaseq_sample_report.html 
+    	-o  ${params.qc_output}/${params.experiment_id}_rnaseq_sample_report.html \
+	-c  ${params.percent_mito} \
 	-j  ${params.resolution}
   """
 }
