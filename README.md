@@ -80,8 +80,8 @@ If working with a .xls/.xlsx file please create a .csv file called samples.csv w
 example: \
 https://github.com/bwh-bioinformatics-hub/nextflow-scRNAseq/blob/main/samplesheet/samplesheet.csv
 ```
-sample_id,fastq_path
-P1708_SP093_105,/mnt/data0/projects/biohub/susanne2022/raw_data/sussane_2022_raw_files/fastq_files/
+sample_id
+P1708_SP093_105
 ```
 
 
