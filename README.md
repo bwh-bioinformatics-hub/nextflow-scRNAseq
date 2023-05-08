@@ -33,16 +33,13 @@ sudo apt-get install pandoc libhdf5-dev
 
 CRAN packages can be installed in R using:
 ```
-install.packages("devtools")
-install.packages('viridis',repo="https://cloud.r-project.org")
-install.packages("scCustomize",repo="https://cloud.r-project.org")
+install.packages(c('BiocManager', 'devtools','FactoMineR', 'ggforce','systemfonts', 'assertthat', 'cowplot', 'data.table', 'dplyr', 'ids', 'ggplot2', 'jsonlite', 'Matrix', 'optparse', 'GetoptLong', 'purrr','R.utils','rmarkdown','stringr','gt','plotly','tidyr','Seurat','future','future.apply','rio','purrr','scCustomize','egg','DT','SoupX','reticulate','glmpca','remotes','viridis','qs','gridExtra','plyr','circlize','naniar','ggpubr','XML','RCurl'),repos='http://cran.us.r-project.org'); BiocManager::install(c('rhdf5', 'SingleCellExperiment', 'SummarizedExperiment','ComplexHeatmap','EnhancedVolcano'))"
 # Dot plot is depedent on GitHub Report (https://github.com/Simon-Leonard/FlexDotPlot)
 devtools::install_github("Simon-Leonard/FlexDotPlot")
+remotes::install_github('chris-mcginnis-ucsf/DoubletFinder')
+remotes::install_github('satijalab/seurat-wrappers')
 ```
-Python Packages can be installed in Python using:
-```
-pip install scrublet
-```
+
 
 Some Packages are Dependent on BiocManager
 ```
