@@ -72,7 +72,7 @@ process QC_Report {
     """
     Rscript ${baseDir}/scripts/qcreporter/qc_batch_summary.r \
     	-e  ${params.experiment_id} \
-    	-m  'scrna_unintegrated' \
+    	-m  '' \ # can be 'scrna' or 'scrna_unintegrated'
     	-i  ${params.qc_in_dir} \
     	-z  ${params.cellrangers_outs_dir} \
     	-f  ${params.refdir} \
