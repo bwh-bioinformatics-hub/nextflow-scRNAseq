@@ -15,7 +15,6 @@ them to standard file formats for use by downstream tools. The steps involved ar
 * Add meta, will add the metadata from CellRanger Count and user provided samplesheet to .h5 file.
 * Create QC Report of all Samples provided.
 * Cell Clustering and Cell Type Annotation.
-* Perform Trajectory Analysis.
 <a id="dependencies"></a>
 
 ## Dependencies    
