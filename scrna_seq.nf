@@ -24,34 +24,13 @@ Channel
 println """\
          RNA Seq - N F   P I P E L I N E
          ===================================
-         Experiment       		     : ${params.experiment_id}
-         Samplesheet        		   : ${params.in_key}
+         Experiment       		   : ${params.experiment_id}
+         Samplesheet        	   : ${params.in_key}
          CellRangersOuts Directory : ${params.cellrangers_outdir}
          QC Report input directory : ${params.qc_in_dir}
          QC Report Output directory: ${params.qc_output}
          """
          .stripIndent()
-
-process scrublet {
-
-  publishDir (
-        path: "${params.outdir}/scrubletdir/",
-        mode: 'copy',
-        overwrite: 'true',
-  )	 
-    input:
-    each samples 
-    output: 
-    
-    path("${samples}_scrublet.{logic,score}") into scrublet_out
-    
-    script:
-
-    """
-	python3 ${baseDir}/scripts/scrublet_multi.py ${params.cellrangers_outs_dir} ${params.scrublet_SUFFIX} ${samples}
-    """
-
-}
 
 process add_meta {
 
@@ -87,23 +66,22 @@ process QC_Report {
     input:
     
     file(in_h5) from meta_added.collect()
-    file(scrub_dir) from scrublet_out.collect()
     output: 
     	
     script:
     """
     Rscript ${baseDir}/scripts/qcreporter/qc_batch_summary.r \
     	-e  ${params.experiment_id} \
-    	-m  'scrna' \
+    	-m  'scrna_unintegrated' \
     	-i  ${params.qc_in_dir} \
     	-z  ${params.cellrangers_outs_dir} \
-    	-u  ${params.outdir}/scrubletdir/" \
     	-f  ${params.refdir} \
     	-k  ${params.in_key}   \
     	-d  ${params.qc_output} \
     	-o  ${params.qc_output}/${params.experiment_id}_rnaseq_sample_report.html \
-	-c  ${params.percent_mito} \
-	-j  ${params.resolution}
+      -a  ${params.percent_ribo} \
+      -j  'RNA_snn_res.0.5' \
+      -b  FALSE \
+      -c  ${params.percent_mito} -u FALSE -q FALSE
   """
 }
-
