@@ -79,9 +79,11 @@ process QC_Report {
     	-k  ${params.in_key}   \
     	-d  ${params.qc_output} \
     	-o  ${params.qc_output}/${params.experiment_id}_rnaseq_sample_report.html \
-      -a  ${params.percent_ribo} \
-      -j  'RNA_snn_res.0.5' \
-      -b  FALSE \
-      -c  ${params.percent_mito} -u FALSE -q FALSE
+        -a  ${params.percent_ribo} \
+        -j  ${params.resolution} \
+        -b  ${params.filter_MALAT} \
+        -c  ${params.percent_mito} \
+        -u  ${params.filter_MITO} \
+        -q  ${params.filter_RIBO}
   """
 }
