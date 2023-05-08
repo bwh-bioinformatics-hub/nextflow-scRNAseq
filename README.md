@@ -11,9 +11,9 @@ Note: This pipeline is designed to be run post running CellRanger Count. If the 
 This pipeline manages a scRNA-Seq workflow starting from raw fastq files and converting
 them to standard file formats for use by downstream tools. The steps involved are:
 
-* Scrublet Process: Single-Cell Remover of Doublets, Python code for identifying doublets in single-cell RNA-seq data.
 * Add meta, will add the metadata from CellRanger Count and user provided samplesheet to .h5 file.
-* Create QC Report of all Samples provided.
+* Create QC Report of all Samples provided. 
+* Uses DoubletFinder to remove doublets. https://github.com/chris-mcginnis-ucsf/DoubletFinder
 * Cell Clustering and Cell Type Annotation.
 <a id="dependencies"></a>
 
