@@ -18,7 +18,7 @@ Channel
     .map { row ->  row.sample_id }
     .set { sample_id_ch }
 
-(sample_id,samples,sample) = sample_id_ch.into(3)
+(sample) = sample_id_ch.into(1)
 
 
 println """\
