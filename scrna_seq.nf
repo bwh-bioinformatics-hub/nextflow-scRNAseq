@@ -32,7 +32,7 @@ println """\
          """
          .stripIndent()
 
-process add_meta {
+process QC_Summary {
 
   publishDir (
         path: "${params.outdir}",
@@ -44,7 +44,7 @@ process add_meta {
     each sample 
     output: 
     
-    	path("${sample}.h5") into meta_added
+    	path("${sample}.h5") into qc_summary
     
     script:
 
@@ -65,7 +65,7 @@ process QC_Report {
 	
     input:
     
-    file(in_h5) from meta_added.collect()
+    file(qc_sum) from qc_summary.collect()
     output: 
     	
     script:
