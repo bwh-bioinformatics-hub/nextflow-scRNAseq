@@ -48,13 +48,13 @@ process add_meta {
     
     script:
 
-    """
+  """
     Rscript ${baseDir}/scripts/rna_seq_pipeline_bwh/tenx_metadata_rna_adder.r \
-  -i ${params.cellrangers_outs_dir}/${sample}/outs/filtered_feature_bc_matrix.h5   \
-  -l ${params.cellrangers_outs_dir}/${sample}/outs/molecule_info.h5 \
-  -s ${params.cellrangers_outs_dir}/${sample}/outs/metrics_summary.csv \
-  -k ${params.in_key} \
-  -j ${sample} \
+    -i ${params.cellrangers_outs_dir}/${sample}/outs/filtered_feature_bc_matrix.h5   \
+    -l ${params.cellrangers_outs_dir}/${sample}/outs/molecule_info.h5 \
+    -s ${params.cellrangers_outs_dir}/${sample}/outs/metrics_summary.csv \
+    -k ${params.in_key} \
+    -j ${sample} \
   """
 
 }
