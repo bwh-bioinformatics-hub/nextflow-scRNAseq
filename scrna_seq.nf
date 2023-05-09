@@ -24,7 +24,7 @@ Channel
 println """\
          RNA Seq - N F   P I P E L I N E
          ===================================
-         Experiment       		   : ${params.experiment_id}
+         Experiment                : ${params.experiment_id}
          Samplesheet        	   : ${params.in_key}
          CellRangersOuts Directory : ${params.cellrangers_outdir}
          QC Report input directory : ${params.qc_in_dir}
