@@ -79,7 +79,7 @@ process QC_Report {
     	-k  ${params.in_key}   \
     	-d  ${params.qc_output} \
     	-o  ${params.qc_output}/${params.experiment_id}_rnaseq_sample_report.html \
-	-y  ${params.species} \
+	-l  ${params.species} \
         -a  ${params.percent_ribo} \
         -j  ${params.resolution} \
         -b  ${params.filter_MALAT} \
