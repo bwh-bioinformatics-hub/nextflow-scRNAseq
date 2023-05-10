@@ -66,7 +66,7 @@ option_list <- list(
               default = FALSE,
               help = "Filter Mito Genes TRUE/FALSE",
               metavar = "character"),
-  make_option(opt_str = c("-y","--species"),
+  make_option(opt_str = c("-l","--species"),
               type = "character",
               default = NULL,
               help = "Species of Experiment",
