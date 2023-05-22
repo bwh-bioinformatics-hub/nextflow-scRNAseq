@@ -87,24 +87,6 @@ if(!file.exists(in_key)) {
   stop()
 }
 
-
-
-### Load inputs
-
-quiet_library <- function(...) {
-  suppressPackageStartupMessages(library(...))
-}
-quiet_library(rhdf5)
-quiet_library(H5MANIPULATOR)
-quiet_library(Matrix)
-quiet_library(ggplot2)
-quiet_library(cowplot)
-quiet_library(jsonlite)
-quiet_library(tidyverse)
-quiet_library(googlesheets4)
-quiet_library(rio)
-quiet_library(Seurat)
-
 #### Load scRNA-seq Dataset
 stm(paste0("Loading HDF5 from ", in_h5))
 h5_list <- h5dump(in_h5)
