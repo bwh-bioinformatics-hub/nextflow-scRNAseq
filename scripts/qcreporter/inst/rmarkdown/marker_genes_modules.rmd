@@ -660,6 +660,32 @@ meta <- scrna.combined@meta.data
 Idents(scrna.combined) <- meta[resolution]
 rm(scrna.list)
 saveRDS(scrna.combined, paste0(outdir, "scrna.combined_postfilter.seurat.", projectName, ".rds"))
+                          
+p1 <- DimPlot(scrna.combined, reduction = "umap", group.by = "orig.ident")
+p1
+pdf(file=paste0(outdir, "combined.umap.colorBySample.pdf"))
+print(p1 + coord_fixed())
+dev.off()
+
+p2 <- DimPlot(scrna.combined, reduction = "umap", label = TRUE, repel = TRUE)
+p2
+pdf(paste0(outdir, "combined.umap.colorByCluster.pdf"))
+print(p2 + coord_fixed())
+dev.off()
+
+p3 <- DimPlot(scrna.combined, reduction = "umap", split.by = "orig.ident", ncol = 4)
+p3
+pdf(paste0(outdir, "combined.umap.samples.pdf"), width = 12, height = 8)
+print(p3 + coord_fixed())
+dev.off()
+
+p4 <- DimPlot(scrna.combined, reduction = "umap", group.by = "treatment")
+p4
+pdf(file=paste0(outdir, "combined.umap.colorByTreatment.pdf"))
+print(p4 + coord_fixed())
+dev.off() 
+                          
+                          
 ```
 
 ```{r }
